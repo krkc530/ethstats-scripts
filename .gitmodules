@@ -1,0 +1,6 @@
+[submodule "ethstats-server"]
+	path = ethstats-server
+	url = https://github.com/krkc530/ethstats-server
+[submodule "ethstats-client"]
+	path = ethstats-client
+	url = https://github.com/krkc530/ethstats-client
