@@ -1,7 +1,7 @@
 #!/bin/bash
 
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OUTPUT_DIR=${__dir}/server.ip
+OUTPUT_PATH=${__dir}/server.cfg
 
 WS_PORT=3000
 WS_SECRET="admin"
@@ -14,8 +14,8 @@ usage() {
     echo "  server              Run in server mode"
     echo "  client              Run in client mode"
     echo "Options:"
-    echo "  --name=VALUE            Specify the docker container name (default: ethstats-server)"
-    echo "  --image-name=VALUE      Specify the docker image name (default: ethstats-server)"
+    echo "  --name=VALUE            Specify the docker container name (default: ethstats-server|ethstats-client)"
+    echo "  --image-name=VALUE      Specify the docker image name (default: ethstats-server|ethstats-client)"
     echo "  --secret=VALUE          Specify the password for web socket communication (default: admin)"
     echo "  --port=VALUE            Specify the port for server container (default: 3000)"
     echo "  --instance-name=VALUES  Specify the instance name of client (default: node-instance)" 
@@ -151,7 +151,7 @@ CMD="docker run -d --name ${CONTAINER_NAME} -e "WS_SECRET=${WS_SECRET}" "
 if [ "$MODE" == "server" ]; then
     CMD+="-p ${WS_PORT}:${WS_PORT} "
 else 
-    source $OUTPUT_DIR # read WS_SERVER, WS_SECRET
+    source $OUTPUT_PATH # read WS_SERVER, WS_SECRET
     CMD+="-e RPC_HOST=${RPC_HOST} "
     CMD+="-e RPC_PORT=${RPC_PORT} "
     CMD+="-e WS_SERVER=${WS_SERVER} "
@@ -174,10 +174,6 @@ if [ "$MODE" == "server" ]; then
     # Only in server mode
     WS_HOST=`docker inspect -f "{{ .NetworkSettings.IPAddress }}" ${CONTAINER_NAME}`
     echo "Opened server: ${WS_HOST}:${WS_PORT}"
-    echo "WS_SERVER=http://${WS_HOST}:${WS_PORT}" > ${OUTPUT_DIR}
-    echo "WS_SECRET=${WS_SECRET}" >> ${OUTPUT_DIR}
+    echo "WS_SERVER=http://${WS_HOST}:${WS_PORT}" > ${OUTPUT_PATH}
+    echo "WS_SECRET=${WS_SECRET}" >> ${OUTPUT_PATH}
 fi
-
-echo "=========================================================================="
-
-docker logs -f ${CONTAINER_NAME}
