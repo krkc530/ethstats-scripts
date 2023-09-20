@@ -3,21 +3,42 @@
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_PATH=${__dir}/nodes.cfg
 
-NODE1_HOST="localhost"
-NODE1_PORT="8545"
-NODE2_HOST="localhost"
-NODE2_PORT="8545"
-NODE3_HOST="localhost"
-NODE3_PORT="8545"
-NODE4_HOST="localhost"
-NODE4_PORT="8545"
-
 source $CONFIG_PATH
 
 echo "Notice: Set environment variables in nodes.cfg (i.e., NODE1_HOST="*.*.*.*", NODE1_PORT="8545")"
 
+PORT=3000
+
+usage() {
+    echo "Usage: ./run_all.sh [OPTIONS]"
+    echo "Options:"
+    echo "  --port=VALUE    Specify the server port to be exposed (default: ${PORT})"
+}
+
+# parse command-line arguments
+while [[ $# -gt 0 ]]
+do
+    key="$1"
+
+    case $key in
+        --port=*)
+        PORT="${key#*=}"
+        shift
+        ;;
+        --help)
+        # Display script usage
+        usage
+        exit 0
+        ;;
+        *)
+        # ignore unrecognized arguments
+        shift
+        ;;
+    esac
+done
+
 echo "Run server..."
-if ! ./run.sh server; then
+if ! ./run.sh server --port=${PORT}; then
     echo "Error: Cannot start server container"
     exit 1
 fi

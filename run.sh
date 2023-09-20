@@ -149,13 +149,13 @@ fi
 
 CMD="docker run -d --name ${CONTAINER_NAME} -e "WS_SECRET=${WS_SECRET}" "
 if [ "$MODE" == "server" ]; then
+    CMD+="-e PORT=${WS_PORT} "
     CMD+="-p ${WS_PORT}:${WS_PORT} "
 else 
     source $OUTPUT_PATH # read WS_SERVER, WS_SECRET
     CMD+="-e RPC_HOST=${RPC_HOST} "
     CMD+="-e RPC_PORT=${RPC_PORT} "
     CMD+="-e WS_SERVER=${WS_SERVER} "
-    CMD+="-e WS_SECRET=${WS_SECRET} "
     CMD+="-e INSTANCE_NAME=${INSTANCE_NAME} "
 fi
 CMD+=${IMAGE_NAME}
